@@ -4,17 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TAF — Congés & RTT</title>
-
-<!-- PWA Meta Tags -->
 <meta name="theme-color" content="#0A1628">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TAF Congés">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23E8A020' width='100' height='100' rx='20'/><text x='50' y='65' text-anchor='middle' fill='%230A1628' font-size='40' font-weight='bold'>TAF</text></svg>">
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiVEFGIENvbmfDqXMgJiBSVFQiLCJzaG9ydF9uYW1lIjoiVEFGIiwiZGVzY3JpcHRpb24iOiJHZXN0aW9uIGRlcyBjb25nw6lzIGV0IFJUVCIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMEExNjI4IiwidGhlbWVfY29sb3IiOiIjRThBMDIwIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IGZpbGw9JyUyM0U4QTAyMCcgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnIHJ4PScyMCcvPjx0ZXh0IHg9JzUwJyB5PSc2NScgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nJTIzMEExNjI4JyBmb250LXNpemU9JzQwJyBmb250LXdlaWdodD0nYm9sZCc+VEFGPC90ZXh0Pjwvc3ZnPiIsInNpemVzIjoiMTkyeDE5MiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
-
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<!-- Chart.js pour les statistiques -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <style>
@@ -25,6 +19,7 @@
   --tx:#E2EAF5;--mu:#6B90B5;
   --bd:rgba(255,255,255,.07);--cd:rgba(255,255,255,.05);
   --vac:#C97AE8;--fer:#60AFFF;
+  --gdrive:#4285F4;--firebase:#FFA000;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:14px}
@@ -33,25 +28,23 @@ body::before{content:'';position:fixed;inset:0;background:
   radial-gradient(ellipse 80% 60% at 85% 5%,rgba(232,160,32,.09) 0%,transparent 55%),
   radial-gradient(ellipse 60% 70% at 5% 90%,rgba(39,201,122,.06) 0%,transparent 55%),
   radial-gradient(ellipse 40% 40% at 50% 50%,rgba(96,175,255,.03) 0%,transparent 50%);
-  pointer-events:none;z-index:0;animation:bgPulse 12s ease-in-out infinite alternate}
-@keyframes bgPulse{0%{opacity:.8}100%{opacity:1}}
+  pointer-events:none;z-index:0}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(232,160,32,.25);border-radius:10px}
-html{scroll-behavior:smooth}
+
 .wrap{position:relative;z-index:1}
 
-/* ─ HEADER ─ */
+/* HEADER */
 .hdr{display:flex;align-items:center;gap:14px;padding:12px 22px;
   border-bottom:1px solid rgba(232,160,32,.12);background:rgba(10,22,40,.88);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:sticky;top:0;z-index:200;flex-wrap:wrap;
-  box-shadow:0 4px 30px rgba(0,0,0,.3),0 1px 0 rgba(232,160,32,.08)}
+  backdrop-filter:blur(20px);position:sticky;top:0;z-index:200;flex-wrap:wrap;
+  box-shadow:0 4px 30px rgba(0,0,0,.3)}
 .brand{display:flex;align-items:center;gap:9px;flex-shrink:0}
 .brand-box{width:36px;height:36px;background:linear-gradient(135deg,var(--acc),#F5C05A);border-radius:9px;
   display:flex;align-items:center;justify-content:center;
   font-family:'Syne',sans-serif;font-weight:800;font-size:12px;color:#0A1628;
-  box-shadow:0 2px 12px rgba(232,160,32,.35);transition:transform .2s,box-shadow .2s}
-.brand-box:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(232,160,32,.5)}
+  box-shadow:0 2px 12px rgba(232,160,32,.35)}
 .brand-txt{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;line-height:1.1;
   background:linear-gradient(135deg,var(--tx),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .brand-sub{font-size:10px;color:var(--mu);letter-spacing:.5px}
@@ -59,7 +52,7 @@ html{scroll-behavior:smooth}
   border:1px solid rgba(255,255,255,.05)}
 .ntab{padding:7px 14px;border-radius:7px;border:none;background:transparent;
   color:var(--mu);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
-  cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);white-space:nowrap;position:relative;overflow:hidden}
+  cursor:pointer;transition:all .25s;white-space:nowrap;position:relative}
 .ntab.on{background:linear-gradient(135deg,rgba(232,160,32,.15),rgba(232,160,32,.08));color:var(--tx);
   box-shadow:0 0 12px rgba(232,160,32,.15);border:1px solid rgba(232,160,32,.2)}
 .ntab:hover:not(.on){color:var(--tx);background:rgba(255,255,255,.04)}
@@ -68,125 +61,107 @@ html{scroll-behavior:smooth}
   color:#fff;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 
-/* ─ FIREBASE STATUS ─ */
-.firebase-status{display:flex;align-items:center;gap:6px;margin-left:auto;padding:6px 12px;
-  background:rgba(39,201,122,.1);border:1px solid rgba(39,201,122,.2);border-radius:20px;font-size:11px}
-.firebase-status.offline{background:rgba(240,74,74,.1);border-color:rgba(240,74,74,.2)}
-.firebase-status .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);animation:blink 2s infinite}
-.firebase-status.offline .dot{background:var(--err);animation:none}
+.status-badges{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.status-badge{display:flex;align-items:center;gap:6px;padding:6px 12px;
+  border-radius:20px;font-size:11px;font-weight:500}
+.status-badge .dot{width:8px;height:8px;border-radius:50%;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.firebase-badge{background:rgba(255,160,0,.1);border:1px solid rgba(255,160,0,.2);color:#FFA000}
+.firebase-badge .dot{background:#FFA000}
+.firebase-badge.online{background:rgba(39,201,122,.1);border-color:rgba(39,201,122,.2);color:#27C97A}
+.firebase-badge.online .dot{background:#27C97A}
+.gdrive-badge{background:rgba(66,133,244,.1);border:1px solid rgba(66,133,244,.2);color:#4285F4}
+.gdrive-badge .dot{background:#4285F4;animation:none}
+.gdrive-badge.connected .dot{animation:blink 2s infinite}
 
-/* ─ PWA Install Button ─ */
-.pwa-install{display:none;padding:6px 12px;background:linear-gradient(135deg,var(--acc),#F5C05A);
-  border:none;border-radius:20px;font-size:11px;font-weight:600;color:#0A1628;cursor:pointer;
-  margin-left:8px;transition:all .2s}
-.pwa-install:hover{transform:scale(1.05)}
-.pwa-install.show{display:flex;align-items:center;gap:4px}
-
-/* ─ LAYOUT ─ */
+/* LAYOUT */
 .main{max-width:1100px;margin:0 auto;padding:22px 18px}
 .pg{display:none}.pg.on{display:block}
 .ptitle{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;
   margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
   background:linear-gradient(135deg,var(--tx),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.badge{font-size:10px;font-weight:600;background:linear-gradient(135deg,rgba(232,160,32,.18),rgba(232,160,32,.08));
-  color:var(--acc);border:1px solid rgba(232,160,32,.3);
-  padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px;
-  -webkit-text-fill-color:var(--acc);box-shadow:0 0 12px rgba(232,160,32,.1)}
-.badge-firebase{background:linear-gradient(135deg,rgba(255,196,0,.18),rgba(255,196,0,.08));
-  border:1px solid rgba(255,196,0,.3);color:#FFC400;-webkit-text-fill-color:#FFC400}
-.badge-new{background:linear-gradient(135deg,rgba(39,201,122,.18),rgba(39,201,122,.08));
-  border:1px solid rgba(39,201,122,.3);color:var(--ok);-webkit-text-fill-color:var(--ok)}
+.badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px}
+.badge-firebase{background:rgba(255,160,0,.15);border:1px solid rgba(255,160,0,.3);color:#FFA000;-webkit-text-fill-color:#FFA000}
+.badge-gdrive{background:rgba(66,133,244,.15);border:1px solid rgba(66,133,244,.3);color:#4285F4;-webkit-text-fill-color:#4285F4}
 
-/* ─ CARDS ─ */
+/* CARDS */
 .card{background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
   border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  box-shadow:0 4px 24px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.05);
-  transition:transform .25s cubic-bezier(.4,0,.2,1),box-shadow .25s,border-color .25s;margin-bottom:16px}
-.card:hover{border-color:rgba(232,160,32,.15);box-shadow:0 8px 32px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.05)}
+  backdrop-filter:blur(10px);margin-bottom:16px;
+  box-shadow:0 4px 24px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.05)}
 .card-t{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;
   color:var(--acc);text-transform:uppercase;letter-spacing:1.2px;
   margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(232,160,32,.12);
   display:flex;align-items:center;gap:6px}
 
-/* ─ FORM ─ */
+/* FORM */
 .fg{margin-bottom:12px}
 .fg label{display:block;font-size:10px;font-weight:600;color:var(--mu);
   text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px}
 .fg select,.fg input[type=date],.fg textarea,.fg input[type=text],.fg input[type=password],.fg input[type=email]{
   width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
   border-radius:9px;padding:9px 12px;color:var(--tx);
-  font-family:'DM Sans',sans-serif;font-size:13px;outline:none;
-  transition:all .25s cubic-bezier(.4,0,.2,1);-webkit-appearance:none;appearance:none}
+  font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:all .25s}
 .fg select:focus,.fg input:focus,.fg textarea:focus{border-color:var(--acc);
-  box-shadow:0 0 0 3px rgba(232,160,32,.12),0 0 16px rgba(232,160,32,.08);background:rgba(255,255,255,.06)}
+  box-shadow:0 0 0 3px rgba(232,160,32,.12);background:rgba(255,255,255,.06)}
 .fg select option{background:var(--s1)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
 .btn-acc{width:100%;padding:12px;background:linear-gradient(135deg,var(--acc),#F5C05A);color:#0A1628;border:none;
   border-radius:9px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
-  cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);margin-top:5px;
-  box-shadow:0 2px 12px rgba(232,160,32,.3);position:relative;overflow:hidden}
-.btn-acc:hover{opacity:.95;transform:translateY(-2px);box-shadow:0 6px 24px rgba(232,160,32,.45)}
-.btn-acc:active{transform:translateY(0);box-shadow:0 2px 8px rgba(232,160,32,.2)}
-.btn-acc:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none}
-.btn-sec{padding:7px 15px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--tx);
+  cursor:pointer;transition:all .25s;margin-top:5px;
+  box-shadow:0 2px 12px rgba(232,160,32,.3)}
+.btn-acc:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(232,160,32,.45)}
+.btn-acc:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.btn-sec{padding:8px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--tx);
   border-radius:8px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;
-  cursor:pointer;transition:all .25s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;
-  backdrop-filter:blur(8px)}
-.btn-sec:hover{border-color:var(--acc);color:var(--acc);box-shadow:0 0 12px rgba(232,160,32,.15);transform:translateY(-1px)}
+  cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
+.btn-sec:hover{border-color:var(--acc);color:var(--acc)}
+.btn-gdrive{background:rgba(66,133,244,.1);border-color:rgba(66,133,244,.3);color:#4285F4}
+.btn-gdrive:hover{background:rgba(66,133,244,.2);border-color:#4285F4}
 
-/* ─ SOLDES ─ */
+/* SOLDES */
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .si{background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
-  border:1px solid rgba(255,255,255,.08);border-radius:10px;
-  padding:12px;text-align:center;transition:all .25s;position:relative;overflow:hidden}
-.si::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(39,201,122,.06),transparent 70%);pointer-events:none}
-.si:hover{border-color:rgba(39,201,122,.2);transform:translateY(-1px)}
+  border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;text-align:center}
 .si-l{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mu);margin-bottom:4px;font-weight:600}
-.si-v{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--ok);line-height:1;
-  text-shadow:0 0 20px rgba(39,201,122,.3)}
-.si-v.low{color:var(--warn);text-shadow:0 0 20px rgba(245,166,35,.3)}
-.si-v.nope{color:var(--err);text-shadow:0 0 20px rgba(240,74,74,.3)}
+.si-v{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--ok);line-height:1}
+.si-v.low{color:var(--warn)}
+.si-v.nope{color:var(--err)}
 .si-u{font-size:9px;color:var(--mu);margin-top:2px}
 .av-wrap{text-align:center;padding:4px 0 10px}
 .av{width:50px;height:50px;background:linear-gradient(135deg,var(--s2),rgba(22,40,72,.8));border-radius:50%;
   margin:0 auto 8px;display:flex;align-items:center;justify-content:center;
   font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--acc);
-  border:2px solid rgba(232,160,32,.35);box-shadow:0 4px 16px rgba(232,160,32,.15);
-  transition:all .3s}
-.av:hover{transform:scale(1.05);box-shadow:0 6px 24px rgba(232,160,32,.25)}
+  border:2px solid rgba(232,160,32,.35)}
 .av-n{font-family:'Syne',sans-serif;font-size:14px;font-weight:700}
 .av-s{font-size:11px;color:var(--mu);margin-top:2px}
 .ph{text-align:center;padding:28px 12px;color:var(--mu);font-size:13px;font-style:italic}
 
-/* ─ 2-col layout ─ */
 .col2{display:grid;grid-template-columns:1fr 290px;gap:16px}
 @media(max-width:720px){.col2{grid-template-columns:1fr}.row3{grid-template-columns:1fr}}
 
-/* ─ DEMANDES LIST ─ */
+/* DEMANDES LIST */
 .dlist{display:flex;flex-direction:column;gap:7px}
 .dc{background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
   border:1px solid rgba(255,255,255,.07);border-radius:11px;
-  padding:12px 14px;display:grid;grid-template-columns:36px 1fr auto auto;
-  gap:11px;align-items:center;transition:all .25s cubic-bezier(.4,0,.2,1)}
-.dc:hover{background:rgba(255,255,255,.06);border-color:rgba(232,160,32,.12);transform:translateX(3px)}
+  padding:12px 14px;display:grid;grid-template-columns:36px 1fr auto;
+  gap:11px;align-items:center;transition:all .25s}
+.dc:hover{background:rgba(255,255,255,.06);border-color:rgba(232,160,32,.12)}
 .dtag{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;
-  justify-content:center;font-family:'Syne',sans-serif;font-size:9px;font-weight:800;flex-shrink:0;
-  transition:all .2s}
+  justify-content:center;font-family:'Syne',sans-serif;font-size:9px;font-weight:800}
 .dtag.cp{background:rgba(232,160,32,.12);color:var(--acc2);border:1px solid rgba(232,160,32,.2)}
 .dtag.rtt{background:rgba(39,201,122,.1);color:#6ee8a8;border:1px solid rgba(39,201,122,.15)}
 .dtag.demi{background:rgba(245,166,35,.1);color:#f8ca7c;border:1px solid rgba(245,166,35,.15)}
 .dinfo{min-width:0}
-.dinfo-n{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dinfo-n{font-weight:600;font-size:13px}
 .dinfo-d{font-size:11px;color:var(--mu);margin-top:2px}
-.dstat{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.dstat{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;text-transform:uppercase}
 .dstat.att{background:rgba(96,175,255,.12);color:#60AFFF;border:1px solid rgba(96,175,255,.2)}
 .dstat.ok{background:rgba(39,201,122,.12);color:var(--ok);border:1px solid rgba(39,201,122,.2)}
 .dstat.no{background:rgba(240,74,74,.12);color:var(--err);border:1px solid rgba(240,74,74,.2)}
 
-/* ─ CALENDRIER ─ */
+/* CALENDRIER */
 .cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
 .cal-nav{display:flex;gap:6px}
 .cal-btn{width:34px;height:34px;border:none;border-radius:8px;background:rgba(255,255,255,.05);
@@ -196,45 +171,25 @@ html{scroll-behavior:smooth}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .cal-dh{text-align:center;font-size:10px;font-weight:600;color:var(--mu);padding:6px 0;text-transform:uppercase}
 .cal-d{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:12px;background:rgba(255,255,255,.03);border:1px solid transparent;transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
+  font-size:12px;background:rgba(255,255,255,.03);border:1px solid transparent;cursor:pointer}
 .cal-d:hover{border-color:rgba(232,160,32,.2);background:rgba(255,255,255,.06)}
 .cal-d.today{border-color:var(--acc);box-shadow:0 0 12px rgba(232,160,32,.2)}
 .cal-d.off{opacity:.3;pointer-events:none}
 .cal-d.fer{background:rgba(96,175,255,.08);border-color:rgba(96,175,255,.15)}
 .cal-d.vac{background:rgba(201,122,232,.06);border-color:rgba(201,122,232,.12)}
-.cal-dots{display:flex;gap:2px;margin-top:3px;flex-wrap:wrap;justify-content:center;max-width:100%}
+.cal-dots{display:flex;gap:2px;margin-top:3px;flex-wrap:wrap;justify-content:center}
 .cal-dot{width:6px;height:6px;border-radius:50%}
 
-/* ─ STATS ─ */
+/* STATS */
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 @media(max-width:720px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
 .stat-card{background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
   border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;text-align:center}
 .stat-card .value{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--acc)}
 .stat-card .label{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
-.chart-container{position:relative;height:280px;margin-bottom:20px}
+.chart-container{position:relative;height:280px}
 
-/* ─ TOAST ─ */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
-  background:linear-gradient(135deg,var(--s2),var(--s1));border:1px solid rgba(232,160,32,.2);
-  padding:12px 20px;border-radius:12px;display:flex;align-items:center;gap:10px;
-  font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);
-  box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
-/* ─ CONFIG ─ */
-.config-panel{background:linear-gradient(145deg,rgba(255,196,0,.08),rgba(255,196,0,.02));
-  border:1px solid rgba(255,196,0,.15);border-radius:12px;padding:16px;margin-bottom:16px}
-.config-panel h4{font-family:'Syne',sans-serif;font-size:12px;color:#FFC400;margin-bottom:12px;
-  display:flex;align-items:center;gap:8px}
-.config-panel .fg input{background:rgba(0,0,0,.2);border-color:rgba(255,196,0,.2)}
-.config-panel .fg input:focus{border-color:#FFC400;box-shadow:0 0 0 3px rgba(255,196,0,.12)}
-
-/* ─ CODE BLOCK ─ */
-.code-block{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:8px;
-  padding:12px;font-family:monospace;font-size:11px;overflow-x:auto;white-space:pre;color:var(--mu)}
-
-/* ─ VALIDATION TABLE ─ */
+/* VALIDATION TABLE */
 .vtable{width:100%;border-collapse:collapse;font-size:12px}
 .vtable th{text-align:left;padding:10px 8px;font-weight:600;color:var(--mu);text-transform:uppercase;
   font-size:9px;letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,.08)}
@@ -247,12 +202,26 @@ html{scroll-behavior:smooth}
 .vbtn.no{background:rgba(240,74,74,.12);color:var(--err);border:1px solid rgba(240,74,74,.2)}
 .vbtn.no:hover{background:rgba(240,74,74,.2)}
 
-/* ─ TABS ─ */
+/* TABS */
 .tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
 .tab{padding:8px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
   border-radius:8px;font-size:12px;cursor:pointer;transition:all .2s}
 .tab.on{background:rgba(232,160,32,.15);border-color:rgba(232,160,32,.3);color:var(--acc)}
 .tab:hover:not(.on){background:rgba(255,255,255,.08)}
+
+/* BACKUP */
+.backup-info{background:linear-gradient(135deg,rgba(66,133,244,.1),rgba(66,133,244,.05));
+  border:1px solid rgba(66,133,244,.2);border-radius:10px;padding:14px;margin-top:12px}
+.backup-info p{font-size:12px;color:var(--mu);margin-bottom:4px}
+.backup-info strong{color:#4285F4}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:linear-gradient(135deg,var(--s2),var(--s1));border:1px solid rgba(232,160,32,.2);
+  padding:12px 20px;border-radius:12px;display:flex;align-items:center;gap:10px;
+  font-size:13px;z-index:9999;opacity:0;transition:all .3s;
+  box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 </style>
 </head>
 <body>
@@ -262,36 +231,39 @@ html{scroll-behavior:smooth}
   <header class="hdr">
     <div class="brand">
       <div class="brand-box">TAF</div>
-      <div><div class="brand-txt">Congés & RTT</div><div class="brand-sub">Gestion des absences</div></div>
+      <div><div class="brand-txt">Conges et RTT</div><div class="brand-sub">Firebase + Google Drive</div></div>
     </div>
     <nav class="nav">
-      <button class="ntab on" data-pg="mespace">🏠 Mon espace</button>
-      <button class="ntab" data-pg="demande">📝 Demande</button>
-      <button class="ntab" data-pg="calendrier">📅 Calendrier</button>
-      <button class="ntab" data-pg="stats">📊 Stats</button>
-      <button class="ntab" data-pg="validation">✅ Validation <span id="badge-attente" class="badge-notif" style="display:none">0</span></button>
-      <button class="ntab" data-pg="config">⚙️ Config</button>
+      <button class="ntab on" data-pg="mespace">Mon espace</button>
+      <button class="ntab" data-pg="demande">Demande</button>
+      <button class="ntab" data-pg="calendrier">Calendrier</button>
+      <button class="ntab" data-pg="stats">Stats</button>
+      <button class="ntab" data-pg="validation">Validation <span id="badge-attente" class="badge-notif" style="display:none">0</span></button>
+      <button class="ntab" data-pg="config">Config</button>
     </nav>
-    <div class="firebase-status" id="fb-status">
-      <span class="dot"></span>
-      <span id="fb-status-txt">Firebase</span>
+    <div class="status-badges">
+      <div class="status-badge firebase-badge" id="fb-badge">
+        <span class="dot"></span>
+        <span id="fb-status">Firebase</span>
+      </div>
+      <div class="status-badge gdrive-badge" id="gdrive-badge">
+        <span class="dot"></span>
+        <span id="gdrive-status">Drive</span>
+      </div>
     </div>
-    <button class="pwa-install" id="pwa-install" onclick="installPWA()">
-      📲 Installer
-    </button>
   </header>
 
   <main class="main">
     <!-- PAGE: MON ESPACE -->
     <section class="pg on" id="pg-mespace">
-      <h2 class="ptitle">🏠 Mon espace <span class="badge badge-firebase">🔥 Firebase</span> <span class="badge badge-new">📱 PWA</span></h2>
+      <h2 class="ptitle">Mon espace <span class="badge badge-firebase">Firebase</span></h2>
       
       <div class="card">
-        <div class="card-t">👤 Connexion</div>
+        <div class="card-t">Connexion</div>
         <div class="fg">
-          <label>Sélectionnez votre nom</label>
+          <label>Selectionnez votre nom</label>
           <select id="me-who" onchange="meLogin()">
-            <option value="">— Choisir —</option>
+            <option value="">-- Choisir --</option>
           </select>
         </div>
         <div class="fg">
@@ -304,48 +276,48 @@ html{scroll-behavior:smooth}
       <div id="me-dashboard" style="display:none">
         <div class="col2">
           <div class="card">
-            <div class="card-t">📊 Mes soldes</div>
+            <div class="card-t">Mes soldes</div>
             <div id="me-soldes"></div>
           </div>
           <div class="card">
-            <div class="card-t">📋 Mes demandes récentes</div>
+            <div class="card-t">Mes demandes recentes</div>
             <div id="me-demandes" class="dlist"></div>
           </div>
         </div>
         <div class="card">
-          <div class="card-t">🗓️ Export calendrier</div>
-          <p style="font-size:12px;color:var(--mu);margin-bottom:12px">Exportez vos absences validées vers votre calendrier (Google, Apple, Outlook...)</p>
-          <button class="btn-sec" onclick="exportMyIcal()">📥 Télécharger .ics (mes absences)</button>
+          <div class="card-t">Export calendrier</div>
+          <p style="font-size:12px;color:var(--mu);margin-bottom:12px">Exportez vos absences vers votre calendrier</p>
+          <button class="btn-sec" onclick="exportMyIcal()">Telecharger .ics</button>
         </div>
       </div>
     </section>
 
     <!-- PAGE: NOUVELLE DEMANDE -->
     <section class="pg" id="pg-demande">
-      <h2 class="ptitle">📝 Nouvelle demande</h2>
+      <h2 class="ptitle">Nouvelle demande</h2>
       <div class="col2">
         <div class="card">
-          <div class="card-t">📋 Formulaire</div>
+          <div class="card-t">Formulaire</div>
           <div class="fg">
             <label>Collaborateur</label>
             <select id="d-who" onchange="whoChange()">
-              <option value="">— Sélectionner —</option>
+              <option value="">-- Selectionner --</option>
             </select>
           </div>
           <div class="fg">
             <label>Type d'absence</label>
             <select id="d-type">
-              <option value="">— Type —</option>
-              <option value="Congé">Congé payé</option>
-              <option value="RTT">RTT (journée)</option>
+              <option value="">-- Type --</option>
+              <option value="Conge">Conge paye</option>
+              <option value="RTT">RTT (journee)</option>
               <option value="1/2 RTT">1/2 RTT</option>
               <option value="Maladie">Maladie</option>
-              <option value="Famille">Événement familial</option>
+              <option value="Famille">Evenement familial</option>
             </select>
           </div>
           <div class="row2">
             <div class="fg">
-              <label>Date début</label>
+              <label>Date debut</label>
               <input type="date" id="d-deb">
             </div>
             <div class="fg">
@@ -354,107 +326,83 @@ html{scroll-behavior:smooth}
             </div>
           </div>
           <div class="fg">
-            <label>Commentaire (optionnel)</label>
-            <textarea id="d-com" rows="2" placeholder="Précisions..."></textarea>
+            <label>Commentaire</label>
+            <textarea id="d-com" rows="2" placeholder="Optionnel..."></textarea>
           </div>
-          <div id="d-err" style="display:none;color:var(--err);font-size:12px;margin-bottom:8px;padding:8px;background:rgba(240,74,74,.1);border-radius:6px"></div>
-          <button class="btn-acc" id="d-submit" disabled onclick="submitDem()">📤 Envoyer la demande</button>
+          <button class="btn-acc" id="d-submit" disabled onclick="submitDem()">Envoyer</button>
         </div>
         <div class="card">
-          <div class="card-t">💰 Soldes actuels</div>
-          <div id="d-soldes"><div class="ph"><div style="font-size:24px;margin-bottom:8px">👤</div>Sélectionnez votre nom</div></div>
+          <div class="card-t">Soldes</div>
+          <div id="d-soldes"><div class="ph">Selectionnez votre nom</div></div>
         </div>
       </div>
     </section>
 
     <!-- PAGE: CALENDRIER -->
     <section class="pg" id="pg-calendrier">
-      <h2 class="ptitle">📅 Calendrier des absences</h2>
+      <h2 class="ptitle">Calendrier</h2>
       <div class="card">
         <div class="cal-hdr">
           <div class="cal-nav">
-            <button class="cal-btn" onclick="CAL.prev()">◀</button>
-            <button class="cal-btn" onclick="CAL.today()">●</button>
-            <button class="cal-btn" onclick="CAL.next()">▶</button>
+            <button class="cal-btn" onclick="CAL.prev()">&lt;</button>
+            <button class="cal-btn" onclick="CAL.today()">o</button>
+            <button class="cal-btn" onclick="CAL.next()">&gt;</button>
           </div>
           <div class="cal-title" id="cal-title"></div>
-          <div style="display:flex;gap:8px;align-items:center">
+          <div style="display:flex;gap:8px">
             <select id="cal-filter" onchange="CAL.render()" style="padding:6px 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:var(--tx);font-size:12px">
               <option value="">Tous</option>
             </select>
-            <button class="btn-sec" onclick="exportAllIcal()">📥 Export iCal</button>
+            <button class="btn-sec" onclick="exportAllIcal()">iCal</button>
           </div>
         </div>
         <div class="cal-grid" id="cal-grid"></div>
       </div>
-      <div class="card">
-        <div class="card-t">📊 Légende</div>
-        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px">
-          <span><span style="display:inline-block;width:10px;height:10px;background:var(--acc);border-radius:50%;margin-right:4px"></span> Congé</span>
-          <span><span style="display:inline-block;width:10px;height:10px;background:var(--ok);border-radius:50%;margin-right:4px"></span> RTT</span>
-          <span><span style="display:inline-block;width:10px;height:10px;background:var(--warn);border-radius:50%;margin-right:4px"></span> 1/2 RTT</span>
-          <span><span style="display:inline-block;width:10px;height:10px;background:var(--fer);border-radius:50%;margin-right:4px"></span> Férié</span>
-          <span><span style="display:inline-block;width:10px;height:10px;background:var(--vac);border-radius:50%;margin-right:4px"></span> Vacances scolaires</span>
-        </div>
-      </div>
     </section>
 
-    <!-- PAGE: STATISTIQUES -->
+    <!-- PAGE: STATS -->
     <section class="pg" id="pg-stats">
-      <h2 class="ptitle">📊 Statistiques <span class="badge badge-new">Nouveau</span></h2>
-      
+      <h2 class="ptitle">Statistiques</h2>
       <div class="stat-grid" id="stat-cards"></div>
-      
       <div class="row2">
         <div class="card">
-          <div class="card-t">📈 Absences par type</div>
-          <div class="chart-container">
-            <canvas id="chart-types"></canvas>
-          </div>
+          <div class="card-t">Par type</div>
+          <div class="chart-container"><canvas id="chart-types"></canvas></div>
         </div>
         <div class="card">
-          <div class="card-t">👥 Absences par collaborateur</div>
-          <div class="chart-container">
-            <canvas id="chart-collabs"></canvas>
-          </div>
+          <div class="card-t">Par collaborateur</div>
+          <div class="chart-container"><canvas id="chart-collabs"></canvas></div>
         </div>
       </div>
-      
       <div class="card">
-        <div class="card-t">📅 Évolution mensuelle (12 derniers mois)</div>
-        <div class="chart-container">
-          <canvas id="chart-monthly"></canvas>
-        </div>
+        <div class="card-t">Evolution mensuelle</div>
+        <div class="chart-container"><canvas id="chart-monthly"></canvas></div>
       </div>
     </section>
 
     <!-- PAGE: VALIDATION -->
     <section class="pg" id="pg-validation">
-      <h2 class="ptitle">✅ Validation des demandes</h2>
+      <h2 class="ptitle">Validation</h2>
       <div class="card" id="v-auth">
-        <div class="card-t">🔐 Accès manager</div>
+        <div class="card-t">Acces manager</div>
         <div class="fg">
           <label>Code PIN Directeur</label>
           <input type="password" id="v-pin" placeholder="****" maxlength="4" onkeyup="if(event.key==='Enter')vAuth()">
         </div>
-        <button class="btn-acc" onclick="vAuth()">Accéder</button>
+        <button class="btn-acc" onclick="vAuth()">Acceder</button>
       </div>
       <div id="v-panel" style="display:none">
         <div class="card">
-          <div class="card-t">⏳ Demandes en attente</div>
+          <div class="card-t">En attente</div>
           <table class="vtable">
-            <thead>
-              <tr><th>Nom</th><th>Type</th><th>Dates</th><th>Commentaire</th><th>Actions</th></tr>
-            </thead>
+            <thead><tr><th>Nom</th><th>Type</th><th>Dates</th><th>Com.</th><th>Actions</th></tr></thead>
             <tbody id="v-tbody-attente"></tbody>
           </table>
         </div>
         <div class="card">
-          <div class="card-t">📜 Historique récent</div>
+          <div class="card-t">Historique</div>
           <table class="vtable">
-            <thead>
-              <tr><th>Nom</th><th>Type</th><th>Dates</th><th>Statut</th></tr>
-            </thead>
+            <thead><tr><th>Nom</th><th>Type</th><th>Dates</th><th>Statut</th></tr></thead>
             <tbody id="v-tbody-hist"></tbody>
           </table>
         </div>
@@ -463,90 +411,72 @@ html{scroll-behavior:smooth}
 
     <!-- PAGE: CONFIG -->
     <section class="pg" id="pg-config">
-      <h2 class="ptitle">⚙️ Configuration</h2>
+      <h2 class="ptitle">Configuration</h2>
       
       <div class="tabs">
-        <div class="tab on" onclick="showConfigTab('firebase')">🔥 Firebase</div>
-        <div class="tab" onclick="showConfigTab('notifs')">📧 Notifications</div>
-        <div class="tab" onclick="showConfigTab('security')">🔒 Sécurité</div>
-        <div class="tab" onclick="showConfigTab('data')">📦 Données</div>
+        <div class="tab on" onclick="showConfigTab('firebase')">Firebase</div>
+        <div class="tab" onclick="showConfigTab('gdrive')">Google Drive</div>
+        <div class="tab" onclick="showConfigTab('data')">Donnees</div>
       </div>
 
       <!-- Tab Firebase -->
       <div id="cfg-tab-firebase">
-        <div class="config-panel">
-          <h4>🔥 Configuration Firebase</h4>
-          <p style="font-size:11px;color:var(--ok);margin-bottom:12px;padding:8px;background:rgba(39,201,122,.1);border-radius:6px">
-            ✅ Configuration pré-remplie pour le projet <strong>rtt-cp</strong>
+        <div class="card" style="border-color:rgba(255,160,0,.2)">
+          <div class="card-t" style="color:#FFA000">Firebase (Base de donnees)</div>
+          <p style="font-size:12px;color:var(--ok);margin-bottom:12px;padding:8px;background:rgba(39,201,122,.1);border-radius:6px">
+            Configure pour le projet <strong>rtt-cp</strong>
           </p>
-          <div class="fg">
-            <label>API Key</label>
-            <input type="text" id="cfg-apiKey" placeholder="AIza...">
-          </div>
-          <div class="fg">
-            <label>Auth Domain</label>
-            <input type="text" id="cfg-authDomain" placeholder="votre-projet.firebaseapp.com">
-          </div>
           <div class="fg">
             <label>Project ID</label>
-            <input type="text" id="cfg-projectId" placeholder="votre-projet">
+            <input type="text" id="cfg-projectId" value="rtt-cp" readonly style="opacity:.7">
           </div>
-          <button class="btn-acc" onclick="saveFirebaseConfig()">💾 Sauvegarder</button>
-        </div>
-      </div>
-
-      <!-- Tab Notifications -->
-      <div id="cfg-tab-notifs" style="display:none">
-        <div class="card">
-          <div class="card-t">📧 Notifications Email</div>
-          <p style="font-size:12px;color:var(--mu);margin-bottom:16px">
-            Pour activer les notifications email, vous devez déployer une Cloud Function Firebase.
-            Voici le code à utiliser :
-          </p>
-          <div class="code-block" id="cloud-function-code"></div>
           <p style="font-size:11px;color:var(--mu);margin-top:12px">
-            📖 <a href="https://firebase.google.com/docs/functions" target="_blank" style="color:var(--acc)">Documentation Firebase Functions</a>
+            Toutes les donnees sont stockees dans Firebase Firestore.<br>
+            Console : <a href="https://console.firebase.google.com/project/rtt-cp" target="_blank" style="color:var(--acc)">console.firebase.google.com/project/rtt-cp</a>
           </p>
-        </div>
-        
-        <div class="card">
-          <div class="card-t">⚙️ Configuration SMTP (via Cloud Function)</div>
-          <div class="fg">
-            <label>Email expéditeur</label>
-            <input type="email" id="cfg-smtp-from" placeholder="noreply@taftrans.fr">
-          </div>
-          <div class="fg">
-            <label>Destinataires validation (séparés par virgule)</label>
-            <input type="text" id="cfg-smtp-to" placeholder="manager@taftrans.fr, rh@taftrans.fr">
-          </div>
-          <button class="btn-sec" onclick="saveNotifConfig()" style="width:100%">💾 Sauvegarder</button>
         </div>
       </div>
 
-      <!-- Tab Sécurité -->
-      <div id="cfg-tab-security" style="display:none">
-        <div class="card">
-          <div class="card-t">🔒 Règles de sécurité Firestore</div>
+      <!-- Tab Google Drive -->
+      <div id="cfg-tab-gdrive" style="display:none">
+        <div class="card" style="border-color:rgba(66,133,244,.2)">
+          <div class="card-t" style="color:#4285F4">Sauvegarde Google Drive</div>
+          
           <p style="font-size:12px;color:var(--mu);margin-bottom:16px">
-            Copiez ces règles dans la console Firebase → Firestore → Règles :
+            Sauvegardez toutes vos donnees sur Google Drive.
           </p>
-          <div class="code-block" id="firestore-rules-code"></div>
-          <button class="btn-sec" onclick="copyFirestoreRules()" style="margin-top:12px">📋 Copier les règles</button>
+          
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn-sec btn-gdrive" onclick="backupToGDrive()" style="flex:1">
+              Sauvegarder maintenant
+            </button>
+            <button class="btn-sec" onclick="document.getElementById('import-file').click()" style="flex:1">
+              Restaurer
+            </button>
+            <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+          </div>
+          
+          <div class="backup-info" style="margin-top:16px">
+            <p><strong>Comment ca marche :</strong></p>
+            <p>1. Cliquez "Sauvegarder" pour telecharger un fichier JSON</p>
+            <p>2. Uploadez ce fichier dans votre Google Drive</p>
+            <p>3. Pour restaurer, cliquez "Restaurer" et selectionnez le fichier</p>
+          </div>
         </div>
       </div>
 
-      <!-- Tab Données -->
+      <!-- Tab Data -->
       <div id="cfg-tab-data" style="display:none">
         <div class="card">
-          <div class="card-t">📦 Initialiser les données</div>
+          <div class="card-t">Initialiser les donnees</div>
           <p style="font-size:12px;color:var(--mu);margin-bottom:12px">
-            Première utilisation ? Créez les collections et données de démo.
+            Premiere utilisation ? Creez les donnees de demo.
           </p>
-          <button class="btn-sec" onclick="seedDatabase()" style="width:100%">🌱 Initialiser la base de données</button>
+          <button class="btn-sec" onclick="seedDatabase()" style="width:100%">Initialiser la base</button>
         </div>
         
         <div class="card">
-          <div class="card-t">👥 Collaborateurs</div>
+          <div class="card-t">Collaborateurs</div>
           <div id="cfg-collabs"></div>
         </div>
       </div>
@@ -554,41 +484,38 @@ html{scroll-behavior:smooth}
   </main>
 </div>
 
-<div class="toast" id="toast"><span id="t-i">✅</span> <span id="t-m"></span></div>
+<div class="toast" id="toast"><span id="t-i"></span> <span id="t-m"></span></div>
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-/* ═══════════ DONNÉES LOCALES ═══════════ */
-const MFR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+/* ═══════════════════════════════════════════════════════════════
+   TAF CONGES & RTT - 100% FIREBASE + GOOGLE DRIVE
+   ZERO AIRTABLE - STOCKAGE UNIQUEMENT FIREBASE
+   ═══════════════════════════════════════════════════════════════ */
+
+const MFR = ['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
 const DFR = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 const FERIES = {
-  '2025-01-01':"Jour de l'An",'2025-04-21':'Lundi de Pâques',
-  '2025-05-01':'Fête du Travail','2025-05-08':'Victoire 1945',
-  '2025-05-29':'Ascension','2025-06-09':'Pentecôte',
-  '2025-07-14':'Fête Nationale','2025-08-15':'Assomption',
-  '2025-11-01':'Toussaint','2025-11-11':'Armistice','2025-12-25':'Noël',
-  '2026-01-01':"Jour de l'An",'2026-04-06':'Lundi de Pâques',
-  '2026-05-01':'Fête du Travail','2026-05-08':'Victoire 1945',
-  '2026-05-14':'Ascension','2026-05-25':'Pentecôte',
-  '2026-07-14':'Fête Nationale','2026-08-15':'Assomption',
-  '2026-11-01':'Toussaint','2026-11-11':'Armistice','2026-12-25':'Noël',
+  '2025-01-01':"Jour de l'An",'2025-04-21':'Lundi de Paques',
+  '2025-05-01':'Fete du Travail','2025-05-08':'Victoire 1945',
+  '2025-05-29':'Ascension','2025-06-09':'Pentecote',
+  '2025-07-14':'Fete Nationale','2025-08-15':'Assomption',
+  '2025-11-01':'Toussaint','2025-11-11':'Armistice','2025-12-25':'Noel',
+  '2026-01-01':"Jour de l'An",'2026-04-06':'Lundi de Paques',
+  '2026-05-01':'Fete du Travail','2026-05-08':'Victoire 1945',
+  '2026-05-14':'Ascension','2026-05-25':'Pentecote',
+  '2026-07-14':'Fete Nationale','2026-08-15':'Assomption',
+  '2026-11-01':'Toussaint','2026-11-11':'Armistice','2026-12-25':'Noel',
 };
-const VACANCES = [
-  {deb:'2025-10-18',fin:'2025-11-03',nom:'Toussaint'},
-  {deb:'2025-12-20',fin:'2026-01-05',nom:'Noël'},
-  {deb:'2026-02-14',fin:'2026-03-02',nom:'Hiver'},
-  {deb:'2026-04-11',fin:'2026-04-27',nom:'Printemps'},
-  {deb:'2026-07-04',fin:'2026-09-01',nom:'Été'},
-];
 const COLORS = {
   'CHARLY':'#E8A020','AURELIEN':'#27C97A','INGY':'#60AFFF','ROMAIN':'#C97AE8','CHRISTOPHE':'#F04A4A'
 };
 const ADMIN_PIN = '2709';
 
-// Configuration Firebase par défaut
+// Firebase Config - SEULE SOURCE DE DONNEES
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDKb1kxz0mmWDdFRhh0tdll3mq23mQpcPU",
   authDomain: "rtt-cp.firebaseapp.com",
@@ -598,115 +525,41 @@ const FIREBASE_CONFIG = {
   appId: "1:44948556666:web:d739e366beb4bde852a4c3"
 };
 
-// Données chargées depuis Firebase
+// State
 let COLLABS = [];
 let DEMANDES = [];
 let meUser = null;
 let db = null;
-let unsubscribeDemandes = null;
-let unsubscribeCollabs = null;
 
-// PWA
-let deferredPrompt = null;
-
-/* ═══════════ PWA ═══════════ */
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('pwa-install').classList.add('show');
-});
-
-async function installPWA() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') {
-    showToast('📲', 'Application installée !');
-  }
-  deferredPrompt = null;
-  document.getElementById('pwa-install').classList.remove('show');
-}
-
-// Service Worker (inline registration)
-if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE = 'taf-v1';
-    self.addEventListener('install', e => self.skipWaiting());
-    self.addEventListener('activate', e => e.waitUntil(clients.claim()));
-    self.addEventListener('fetch', e => {
-      if (e.request.method !== 'GET') return;
-      e.respondWith(
-        caches.match(e.request).then(r => r || fetch(e.request).then(res => {
-          if (res.status === 200) {
-            const clone = res.clone();
-            caches.open(CACHE).then(c => c.put(e.request, clone));
-          }
-          return res;
-        }))
-      );
-    });
-  `;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-}
-
-/* ═══════════ FIREBASE ═══════════ */
-function getFirebaseConfig() {
-  const customKey = localStorage.getItem('fb_apiKey');
-  if (customKey) {
-    return {
-      apiKey: customKey,
-      authDomain: localStorage.getItem('fb_authDomain') || '',
-      projectId: localStorage.getItem('fb_projectId') || ''
-    };
-  }
-  return FIREBASE_CONFIG;
-}
-
-function saveFirebaseConfig() {
-  localStorage.setItem('fb_apiKey', document.getElementById('cfg-apiKey').value);
-  localStorage.setItem('fb_authDomain', document.getElementById('cfg-authDomain').value);
-  localStorage.setItem('fb_projectId', document.getElementById('cfg-projectId').value);
-  showToast('💾', 'Configuration sauvegardée');
-  initFirebase();
-}
-
+/* ═══════════ FIREBASE - SEULE SOURCE DE DONNEES ═══════════ */
 function initFirebase() {
-  const config = getFirebaseConfig();
-  if (!config.apiKey || !config.projectId) {
-    setFirebaseStatus(false, 'Non configuré');
-    return false;
-  }
   try {
     if (firebase.apps.length === 0) {
-      firebase.initializeApp(config);
+      firebase.initializeApp(FIREBASE_CONFIG);
     }
     db = firebase.firestore();
     subscribeToData();
-    setFirebaseStatus(true, 'Connecté');
-    showToast('🔥', 'Firebase connecté !');
+    setFirebaseStatus(true);
+    showToast('OK', 'Firebase connecte');
     return true;
   } catch (err) {
-    console.error('Firebase init error:', err);
-    setFirebaseStatus(false, 'Erreur');
-    showToast('❌', 'Erreur Firebase: ' + err.message);
+    console.error('Firebase error:', err);
+    setFirebaseStatus(false);
     return false;
   }
 }
 
-function setFirebaseStatus(online, text) {
-  const el = document.getElementById('fb-status');
-  const txt = document.getElementById('fb-status-txt');
-  el.classList.toggle('offline', !online);
-  txt.textContent = text;
+function setFirebaseStatus(online) {
+  const badge = document.getElementById('fb-badge');
+  const status = document.getElementById('fb-status');
+  badge.classList.toggle('online', online);
+  status.textContent = online ? 'Connecte' : 'Hors ligne';
 }
 
 function subscribeToData() {
-  if (unsubscribeDemandes) unsubscribeDemandes();
-  if (unsubscribeCollabs) unsubscribeCollabs();
-
-  unsubscribeCollabs = db.collection('collaborateurs').onSnapshot(snapshot => {
-    COLLABS = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  // Collaborateurs - FIREBASE UNIQUEMENT
+  db.collection('collaborateurs').onSnapshot(snap => {
+    COLLABS = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     populateSelects();
     renderConfigCollabs();
     if (meUser) {
@@ -715,14 +568,97 @@ function subscribeToData() {
     }
   });
 
-  unsubscribeDemandes = db.collection('demandes').orderBy('dateDemande', 'desc').onSnapshot(snapshot => {
-    DEMANDES = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  // Demandes - FIREBASE UNIQUEMENT
+  db.collection('demandes').orderBy('dateDemande', 'desc').onSnapshot(snap => {
+    DEMANDES = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     updateBadge();
     if (meUser) renderMeDashboard();
     if (document.getElementById('v-panel').style.display !== 'none') renderValidation();
     if (document.getElementById('pg-calendrier').classList.contains('on')) CAL.render();
     if (document.getElementById('pg-stats').classList.contains('on')) renderStats();
   });
+}
+
+/* ═══════════ GOOGLE DRIVE BACKUP ═══════════ */
+function backupToGDrive() {
+  const data = {
+    version: '1.0',
+    exportDate: new Date().toISOString(),
+    source: 'TAF-Firebase-Only',
+    collaborateurs: COLLABS,
+    demandes: DEMANDES
+  };
+  
+  const filename = 'TAF_Backup_' + new Date().toISOString().split('T')[0] + '.json';
+  const content = JSON.stringify(data, null, 2);
+  
+  // Telecharger le fichier pour upload manuel sur Google Drive
+  downloadJSON(content, filename);
+  
+  localStorage.setItem('last_backup', new Date().toISOString());
+  document.getElementById('gdrive-badge').classList.add('connected');
+  document.getElementById('gdrive-status').textContent = 'Sauvegarde OK';
+  
+  showToast('OK', 'Fichier telecharge - Uploadez-le sur Google Drive');
+}
+
+async function restoreFromBackup(backup) {
+  if (!backup.collaborateurs || !backup.demandes) {
+    showToast('ERREUR', 'Fichier de sauvegarde invalide');
+    return;
+  }
+  
+  if (!confirm('Restaurer ' + backup.collaborateurs.length + ' collaborateurs et ' + backup.demandes.length + ' demandes ?')) {
+    return;
+  }
+  
+  showToast('...', 'Restauration en cours...');
+  
+  try {
+    // Restaurer collaborateurs dans FIREBASE
+    for (const c of backup.collaborateurs) {
+      const { id, ...data } = c;
+      await db.collection('collaborateurs').doc(id).set(data);
+    }
+    
+    // Restaurer demandes dans FIREBASE
+    for (const d of backup.demandes) {
+      const { id, ...data } = d;
+      await db.collection('demandes').doc(id).set(data);
+    }
+    
+    showToast('OK', 'Restauration terminee !');
+  } catch (e) {
+    console.error('Restore error:', e);
+    showToast('ERREUR', e.message);
+  }
+}
+
+function downloadJSON(content, filename) {
+  const blob = new Blob([content], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const backup = JSON.parse(e.target.result);
+      await restoreFromBackup(backup);
+    } catch (err) {
+      showToast('ERREUR', 'Fichier invalide');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
 }
 
 /* ═══════════ UTILS ═══════════ */
@@ -744,12 +680,8 @@ function showToast(i, m) {
 function updateBadge() {
   const att = DEMANDES.filter(d => d.st === 'En attente').length;
   const badge = document.getElementById('badge-attente');
-  if (att > 0) {
-    badge.textContent = att;
-    badge.style.display = 'flex';
-  } else {
-    badge.style.display = 'none';
-  }
+  badge.textContent = att;
+  badge.style.display = att > 0 ? 'flex' : 'none';
 }
 
 function populateSelects() {
@@ -757,7 +689,7 @@ function populateSelects() {
     const sel = document.getElementById(id);
     if (!sel) return;
     const val = sel.value;
-    sel.innerHTML = '<option value="">— ' + (id === 'cal-filter' ? 'Tous' : 'Sélectionner') + ' —</option>';
+    sel.innerHTML = '<option value="">-- ' + (id === 'cal-filter' ? 'Tous' : 'Selectionner') + ' --</option>';
     COLLABS.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c.id;
@@ -774,35 +706,35 @@ function renderConfigCollabs() {
     if (el) el.innerHTML = '<div class="ph">Aucun collaborateur</div>';
     return;
   }
-  el.innerHTML = COLLABS.map(c => `
-    <div style="display:flex;align-items:center;gap:10px;padding:8px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:6px">
-      <div style="width:32px;height:32px;border-radius:50%;background:${COLORS[c.nom] || '#888'}33;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:${COLORS[c.nom] || '#888'}">${c.nom.slice(0,2)}</div>
-      <div style="flex:1">
-        <div style="font-weight:600;font-size:13px">${c.nom}</div>
-        <div style="font-size:10px;color:var(--mu)">${c.role || 'collab'} · ${c.svc || ''}</div>
-      </div>
-      <div style="text-align:right;font-size:10px;color:var(--mu)">
-        <div>CP: ${c.cpS}/${c.cpT}</div>
-        <div>RTT: ${c.rttS}/${c.rttD}</div>
-      </div>
-    </div>
-  `).join('');
+  el.innerHTML = COLLABS.map(c => 
+    '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:6px">' +
+      '<div style="width:32px;height:32px;border-radius:50%;background:' + (COLORS[c.nom] || '#888') + '33;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:' + (COLORS[c.nom] || '#888') + '">' + c.nom.slice(0,2) + '</div>' +
+      '<div style="flex:1">' +
+        '<div style="font-weight:600;font-size:13px">' + c.nom + '</div>' +
+        '<div style="font-size:10px;color:var(--mu)">' + (c.role || 'collab') + ' - ' + (c.svc || '') + '</div>' +
+      '</div>' +
+      '<div style="text-align:right;font-size:10px;color:var(--mu)">' +
+        '<div>CP: ' + c.cpS + '/' + c.cpT + '</div>' +
+        '<div>RTT: ' + c.rttS + '/' + c.rttD + '</div>' +
+      '</div>' +
+    '</div>'
+  ).join('');
 }
 
 /* ═══════════ MON ESPACE ═══════════ */
 function meLogin() {
   const cid = document.getElementById('me-who').value;
   const pin = document.getElementById('me-pin').value;
-  if (!cid) { showToast('⚠️', 'Sélectionnez votre nom'); return; }
+  if (!cid) { showToast('!', 'Selectionnez votre nom'); return; }
   
   const c = COLLABS.find(x => x.id === cid);
-  if (!c) { showToast('❌', 'Collaborateur introuvable'); return; }
-  if (c.pin && c.pin !== pin) { showToast('❌', 'Code PIN incorrect'); return; }
+  if (!c) { showToast('X', 'Introuvable'); return; }
+  if (c.pin && c.pin !== pin) { showToast('X', 'PIN incorrect'); return; }
   
   meUser = c;
   document.getElementById('me-dashboard').style.display = 'block';
   renderMeDashboard();
-  showToast('👋', 'Bienvenue ' + c.nom);
+  showToast('OK', 'Bienvenue ' + c.nom);
 }
 
 function renderMeDashboard() {
@@ -814,17 +746,16 @@ function renderMeDashboard() {
 function renderSoldes(elId, c) {
   const cpC = c.cpS < 2 ? 'nope' : c.cpS < 5 ? 'low' : '';
   const rttC = c.rttS < 1 ? 'nope' : c.rttS < 3 ? 'low' : '';
-  document.getElementById(elId).innerHTML = `
-    <div class="av-wrap">
-      <div class="av" style="background:${COLORS[c.nom] || 'var(--s2)'}33;color:${COLORS[c.nom] || 'var(--acc)'}">${c.nom.slice(0,2)}</div>
-      <div class="av-n">${c.nom}</div>
-      <div class="av-s">${c.svc || ''}</div>
-    </div>
-    <div class="sg">
-      <div class="si"><div class="si-l">CP</div><div class="si-v ${cpC}">${c.cpS}</div><div class="si-u">/ ${c.cpT}j</div></div>
-      <div class="si"><div class="si-l">RTT</div><div class="si-v ${rttC}">${c.rttS}</div><div class="si-u">/ ${c.rttD}j</div></div>
-    </div>
-  `;
+  document.getElementById(elId).innerHTML = 
+    '<div class="av-wrap">' +
+      '<div class="av" style="background:' + (COLORS[c.nom] || 'var(--s2)') + '33;color:' + (COLORS[c.nom] || 'var(--acc)') + '">' + c.nom.slice(0,2) + '</div>' +
+      '<div class="av-n">' + c.nom + '</div>' +
+      '<div class="av-s">' + (c.svc || '') + '</div>' +
+    '</div>' +
+    '<div class="sg">' +
+      '<div class="si"><div class="si-l">CP</div><div class="si-v ' + cpC + '">' + c.cpS + '</div><div class="si-u">/ ' + c.cpT + 'j</div></div>' +
+      '<div class="si"><div class="si-l">RTT</div><div class="si-v ' + rttC + '">' + c.rttS + '</div><div class="si-u">/ ' + c.rttD + 'j</div></div>' +
+    '</div>';
 }
 
 function renderMeDemandes() {
@@ -835,27 +766,25 @@ function renderMeDemandes() {
     return;
   }
   el.innerHTML = myDem.map(d => {
-    const tagClass = d.type === 'Congé' ? 'cp' : d.type.includes('RTT') ? (d.type.includes('1/2') ? 'demi' : 'rtt') : 'cp';
-    const stClass = d.st === 'Validée' ? 'ok' : d.st === 'Refusée' ? 'no' : 'att';
-    return `
-      <div class="dc">
-        <div class="dtag ${tagClass}">${d.type.slice(0,3).toUpperCase()}</div>
-        <div class="dinfo">
-          <div class="dinfo-n">${d.type}</div>
-          <div class="dinfo-d">${fd(d.deb)} → ${fd(d.fin)}</div>
-        </div>
-        <div class="dstat ${stClass}">${d.st}</div>
-      </div>
-    `;
+    const tagClass = d.type === 'Conge' ? 'cp' : d.type.includes('RTT') ? (d.type.includes('1/2') ? 'demi' : 'rtt') : 'cp';
+    const stClass = d.st === 'Validee' ? 'ok' : d.st === 'Refusee' ? 'no' : 'att';
+    return '<div class="dc">' +
+        '<div class="dtag ' + tagClass + '">' + d.type.slice(0,3).toUpperCase() + '</div>' +
+        '<div class="dinfo">' +
+          '<div class="dinfo-n">' + d.type + '</div>' +
+          '<div class="dinfo-d">' + fd(d.deb) + ' - ' + fd(d.fin) + '</div>' +
+        '</div>' +
+        '<div class="dstat ' + stClass + '">' + d.st + '</div>' +
+      '</div>';
   }).join('');
 }
 
-/* ═══════════ NOUVELLE DEMANDE ═══════════ */
+/* ═══════════ DEMANDE ═══════════ */
 function whoChange() {
   const cid = document.getElementById('d-who').value;
   document.getElementById('d-submit').disabled = !cid;
   if (!cid) {
-    document.getElementById('d-soldes').innerHTML = '<div class="ph"><div style="font-size:24px;margin-bottom:8px">👤</div>Sélectionnez votre nom</div>';
+    document.getElementById('d-soldes').innerHTML = '<div class="ph">Selectionnez votre nom</div>';
     return;
   }
   const c = COLLABS.find(x => x.id === cid);
@@ -863,7 +792,7 @@ function whoChange() {
 }
 
 async function submitDem() {
-  if (!db) { showToast('❌', 'Firebase non connecté'); return; }
+  if (!db) { showToast('X', 'Firebase non connecte'); return; }
   
   const cid = document.getElementById('d-who').value;
   const type = document.getElementById('d-type').value;
@@ -871,37 +800,28 @@ async function submitDem() {
   const fin = document.getElementById('d-fin').value;
   const com = document.getElementById('d-com').value;
 
-  if (!cid || !type || !deb || !fin) { showToast('⚠️', 'Remplissez tous les champs'); return; }
-  if (fin < deb) { showToast('⚠️', 'Date de fin incorrecte'); return; }
+  if (!cid || !type || !deb || !fin) { showToast('!', 'Champs requis manquants'); return; }
+  if (fin < deb) { showToast('!', 'Date de fin incorrecte'); return; }
   
   const col = COLLABS.find(c => c.id === cid);
-  if (!col) { showToast('❌', 'Collaborateur introuvable'); return; }
-
-  const data = {
-    cid: cid,
-    nom: col.nom,
-    svc: col.svc || '',
-    type: type,
-    deb: deb,
-    fin: fin,
-    st: 'En attente',
-    com: com,
-    dateDemande: new Date().toISOString()
-  };
+  if (!col) return;
 
   try {
-    await db.collection('demandes').add(data);
-    showToast('✅', 'Demande envoyée !');
+    // SAUVEGARDE UNIQUEMENT DANS FIREBASE
+    await db.collection('demandes').add({
+      cid, nom: col.nom, svc: col.svc || '', type, deb, fin,
+      st: 'En attente', com, dateDemande: new Date().toISOString()
+    });
+    showToast('OK', 'Demande envoyee !');
     ['d-type', 'd-deb', 'd-fin', 'd-com'].forEach(id => document.getElementById(id).value = '');
   } catch (e) {
-    showToast('❌', 'Erreur: ' + e.message);
+    showToast('X', 'Erreur: ' + e.message);
   }
 }
 
 /* ═══════════ VALIDATION ═══════════ */
 function vAuth() {
-  const pin = document.getElementById('v-pin').value;
-  if (pin !== ADMIN_PIN) { showToast('❌', 'Code incorrect'); return; }
+  if (document.getElementById('v-pin').value !== ADMIN_PIN) { showToast('X', 'Code incorrect'); return; }
   document.getElementById('v-auth').style.display = 'none';
   document.getElementById('v-panel').style.display = 'block';
   renderValidation();
@@ -912,50 +832,42 @@ function renderValidation() {
   const hist = DEMANDES.filter(d => d.st !== 'En attente').slice(0, 10);
 
   document.getElementById('v-tbody-attente').innerHTML = attente.length === 0 
-    ? '<tr><td colspan="5" style="text-align:center;color:var(--mu);padding:20px">✨ Aucune demande en attente</td></tr>'
-    : attente.map(d => `
-        <tr>
-          <td><strong>${d.nom}</strong></td>
-          <td>${d.type}</td>
-          <td>${fd(d.deb)} → ${fd(d.fin)}</td>
-          <td style="color:var(--mu);font-size:11px">${d.com || '—'}</td>
-          <td>
-            <button class="vbtn ok" onclick="valider('${d.id}')">✓</button>
-            <button class="vbtn no" onclick="refuser('${d.id}')">✗</button>
-          </td>
-        </tr>
-      `).join('');
+    ? '<tr><td colspan="5" style="text-align:center;color:var(--mu);padding:20px">Aucune demande</td></tr>'
+    : attente.map(d => 
+        '<tr>' +
+          '<td><strong>' + d.nom + '</strong></td>' +
+          '<td>' + d.type + '</td>' +
+          '<td>' + fd(d.deb) + ' - ' + fd(d.fin) + '</td>' +
+          '<td style="color:var(--mu);font-size:11px">' + (d.com || '--') + '</td>' +
+          '<td>' +
+            '<button class="vbtn ok" onclick="valider(\'' + d.id + '\')">OK</button> ' +
+            '<button class="vbtn no" onclick="refuser(\'' + d.id + '\')">X</button>' +
+          '</td>' +
+        '</tr>'
+      ).join('');
 
   document.getElementById('v-tbody-hist').innerHTML = hist.length === 0
-    ? '<tr><td colspan="4" style="text-align:center;color:var(--mu);padding:20px">Aucun historique</td></tr>'
-    : hist.map(d => `
-        <tr>
-          <td>${d.nom}</td>
-          <td>${d.type}</td>
-          <td>${fd(d.deb)} → ${fd(d.fin)}</td>
-          <td><span class="dstat ${d.st === 'Validée' ? 'ok' : 'no'}">${d.st}</span></td>
-        </tr>
-      `).join('');
+    ? '<tr><td colspan="4" style="text-align:center;color:var(--mu)">Aucun historique</td></tr>'
+    : hist.map(d => 
+        '<tr>' +
+          '<td>' + d.nom + '</td>' +
+          '<td>' + d.type + '</td>' +
+          '<td>' + fd(d.deb) + ' - ' + fd(d.fin) + '</td>' +
+          '<td><span class="dstat ' + (d.st === 'Validee' ? 'ok' : 'no') + '">' + d.st + '</span></td>' +
+        '</tr>'
+      ).join('');
 }
 
 async function valider(id) {
-  if (!db) return;
-  try {
-    await db.collection('demandes').doc(id).update({ st: 'Validée', dateValidation: new Date().toISOString() });
-    showToast('✅', 'Demande validée');
-  } catch (e) {
-    showToast('❌', 'Erreur: ' + e.message);
-  }
+  // MISE A JOUR UNIQUEMENT DANS FIREBASE
+  await db.collection('demandes').doc(id).update({ st: 'Validee', dateValidation: new Date().toISOString() });
+  showToast('OK', 'Validee');
 }
 
 async function refuser(id) {
-  if (!db) return;
-  try {
-    await db.collection('demandes').doc(id).update({ st: 'Refusée', dateValidation: new Date().toISOString() });
-    showToast('🚫', 'Demande refusée');
-  } catch (e) {
-    showToast('❌', 'Erreur: ' + e.message);
-  }
+  // MISE A JOUR UNIQUEMENT DANS FIREBASE
+  await db.collection('demandes').doc(id).update({ st: 'Refusee', dateValidation: new Date().toISOString() });
+  showToast('X', 'Refusee');
 }
 
 /* ═══════════ CALENDRIER ═══════════ */
@@ -965,211 +877,116 @@ const CAL = {
   next() { this.date.setMonth(this.date.getMonth() + 1); this.render(); },
   today() { this.date = new Date(); this.render(); },
   render() {
-    const y = this.date.getFullYear();
-    const m = this.date.getMonth();
+    const y = this.date.getFullYear(), m = this.date.getMonth();
     document.getElementById('cal-title').textContent = MFR[m] + ' ' + y;
     
-    const first = new Date(y, m, 1);
-    const last = new Date(y, m + 1, 0);
+    const first = new Date(y, m, 1), last = new Date(y, m + 1, 0);
     const startDay = (first.getDay() + 6) % 7;
-    
     const filter = document.getElementById('cal-filter').value;
     const todayStr = new Date().toISOString().split('T')[0];
     
-    let html = DFR.map(d => `<div class="cal-dh">${d}</div>`).join('');
-    
+    let html = DFR.map(d => '<div class="cal-dh">' + d + '</div>').join('');
     for (let i = 0; i < startDay; i++) html += '<div class="cal-d off"></div>';
     
     for (let d = 1; d <= last.getDate(); d++) {
-      const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const ds = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
       const isToday = ds === todayStr;
       const isFerie = FERIES[ds];
-      const isVac = VACANCES.some(v => ds >= v.deb && ds <= v.fin);
+      const abs = DEMANDES.filter(dem => dem.st !== 'Refusee' && dem.deb <= ds && dem.fin >= ds && (!filter || dem.cid === filter));
       
-      const abs = DEMANDES.filter(dem => 
-        dem.st !== 'Refusée' && dem.deb <= ds && dem.fin >= ds &&
-        (!filter || dem.cid === filter)
-      );
+      let cls = ['cal-d'];
+      if (isToday) cls.push('today');
+      if (isFerie) cls.push('fer');
       
-      let classes = ['cal-d'];
-      if (isToday) classes.push('today');
-      if (isFerie) classes.push('fer');
-      if (isVac && !isFerie) classes.push('vac');
-      
-      const dots = abs.slice(0, 4).map(a => 
-        `<div class="cal-dot" style="background:${COLORS[a.nom] || '#888'}" title="${a.nom}"></div>`
-      ).join('');
-      
-      html += `<div class="${classes.join(' ')}" title="${isFerie || ''}">
-        <span>${d}</span>
-        <div class="cal-dots">${dots}</div>
-      </div>`;
+      const dots = abs.slice(0, 4).map(a => '<div class="cal-dot" style="background:' + (COLORS[a.nom] || '#888') + '"></div>').join('');
+      html += '<div class="' + cls.join(' ') + '" title="' + (isFerie || '') + '"><span>' + d + '</span><div class="cal-dots">' + dots + '</div></div>';
     }
-    
     document.getElementById('cal-grid').innerHTML = html;
   }
 };
 
-/* ═══════════ STATISTIQUES ═══════════ */
-let chartTypes = null;
-let chartCollabs = null;
-let chartMonthly = null;
+/* ═══════════ STATS ═══════════ */
+let chartTypes, chartCollabs, chartMonthly;
 
 function renderStats() {
-  const validated = DEMANDES.filter(d => d.st === 'Validée');
+  const validated = DEMANDES.filter(d => d.st === 'Validee');
   const pending = DEMANDES.filter(d => d.st === 'En attente');
   const thisYear = validated.filter(d => d.deb && d.deb.startsWith(new Date().getFullYear()));
   
-  // Stat cards
-  document.getElementById('stat-cards').innerHTML = `
-    <div class="stat-card"><div class="value">${validated.length}</div><div class="label">Validées</div></div>
-    <div class="stat-card"><div class="value" style="color:var(--fer)">${pending.length}</div><div class="label">En attente</div></div>
-    <div class="stat-card"><div class="value" style="color:var(--ok)">${thisYear.length}</div><div class="label">Cette année</div></div>
-    <div class="stat-card"><div class="value" style="color:var(--vac)">${COLLABS.length}</div><div class="label">Collaborateurs</div></div>
-  `;
+  document.getElementById('stat-cards').innerHTML = 
+    '<div class="stat-card"><div class="value">' + validated.length + '</div><div class="label">Validees</div></div>' +
+    '<div class="stat-card"><div class="value" style="color:var(--fer)">' + pending.length + '</div><div class="label">En attente</div></div>' +
+    '<div class="stat-card"><div class="value" style="color:var(--ok)">' + thisYear.length + '</div><div class="label">Cette annee</div></div>' +
+    '<div class="stat-card"><div class="value" style="color:var(--vac)">' + COLLABS.length + '</div><div class="label">Collaborateurs</div></div>';
 
-  // Chart: Types
   const typeCount = {};
   validated.forEach(d => { typeCount[d.type] = (typeCount[d.type] || 0) + 1; });
   
   if (chartTypes) chartTypes.destroy();
   chartTypes = new Chart(document.getElementById('chart-types'), {
     type: 'doughnut',
-    data: {
-      labels: Object.keys(typeCount),
-      datasets: [{
-        data: Object.values(typeCount),
-        backgroundColor: ['#E8A020', '#27C97A', '#F5A623', '#60AFFF', '#C97AE8', '#F04A4A']
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { color: '#6B90B5' } } }
-    }
+    data: { labels: Object.keys(typeCount), datasets: [{ data: Object.values(typeCount), backgroundColor: ['#E8A020', '#27C97A', '#F5A623', '#60AFFF', '#C97AE8'] }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#6B90B5' } } } }
   });
 
-  // Chart: Collabs
   const collabCount = {};
   validated.forEach(d => { collabCount[d.nom] = (collabCount[d.nom] || 0) + 1; });
   
   if (chartCollabs) chartCollabs.destroy();
   chartCollabs = new Chart(document.getElementById('chart-collabs'), {
     type: 'bar',
-    data: {
-      labels: Object.keys(collabCount),
-      datasets: [{
-        label: 'Absences',
-        data: Object.values(collabCount),
-        backgroundColor: Object.keys(collabCount).map(n => COLORS[n] || '#888')
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: '#6B90B5' }, grid: { color: 'rgba(255,255,255,.05)' } },
-        y: { ticks: { color: '#6B90B5' }, grid: { color: 'rgba(255,255,255,.05)' } }
-      }
-    }
+    data: { labels: Object.keys(collabCount), datasets: [{ label: 'Absences', data: Object.values(collabCount), backgroundColor: Object.keys(collabCount).map(n => COLORS[n] || '#888') }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#6B90B5' } }, y: { ticks: { color: '#6B90B5' } } } }
   });
 
-  // Chart: Monthly
   const monthlyData = {};
   const now = new Date();
   for (let i = 11; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    monthlyData[key] = 0;
+    monthlyData[d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0')] = 0;
   }
-  validated.forEach(d => {
-    if (d.deb) {
-      const key = d.deb.slice(0, 7);
-      if (monthlyData.hasOwnProperty(key)) monthlyData[key]++;
-    }
-  });
+  validated.forEach(d => { if (d.deb) { const k = d.deb.slice(0, 7); if (monthlyData.hasOwnProperty(k)) monthlyData[k]++; } });
   
   if (chartMonthly) chartMonthly.destroy();
   chartMonthly = new Chart(document.getElementById('chart-monthly'), {
     type: 'line',
-    data: {
-      labels: Object.keys(monthlyData).map(k => { const [y,m] = k.split('-'); return MFR[parseInt(m)-1].slice(0,3) + ' ' + y.slice(2); }),
-      datasets: [{
-        label: 'Absences',
-        data: Object.values(monthlyData),
-        borderColor: '#E8A020',
-        backgroundColor: 'rgba(232,160,32,.1)',
-        fill: true,
-        tension: 0.4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: '#6B90B5' }, grid: { color: 'rgba(255,255,255,.05)' } },
-        y: { ticks: { color: '#6B90B5' }, grid: { color: 'rgba(255,255,255,.05)' }, beginAtZero: true }
-      }
-    }
+    data: { labels: Object.keys(monthlyData).map(k => MFR[parseInt(k.split('-')[1])-1].slice(0,3)), datasets: [{ data: Object.values(monthlyData), borderColor: '#E8A020', backgroundColor: 'rgba(232,160,32,.1)', fill: true, tension: 0.4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#6B90B5' } }, y: { beginAtZero: true, ticks: { color: '#6B90B5' } } } }
   });
 }
 
 /* ═══════════ EXPORT iCAL ═══════════ */
 function generateIcal(events, filename) {
-  let ical = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//TAF//Conges RTT//FR
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-X-WR-CALNAME:TAF Absences
-`;
-
+  let ical = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//TAF//Conges//FR\nCALSCALE:GREGORIAN\n';
   events.forEach((e, i) => {
-    const uid = `${e.id || i}@taf-conges`;
     const dtstart = e.deb.replace(/-/g, '');
     const dtend = new Date(new Date(e.fin).getTime() + 86400000).toISOString().split('T')[0].replace(/-/g, '');
-    const summary = `${e.nom} - ${e.type}`;
-    const desc = e.com || '';
-    
-    ical += `BEGIN:VEVENT
-UID:${uid}
-DTSTART;VALUE=DATE:${dtstart}
-DTEND;VALUE=DATE:${dtend}
-SUMMARY:${summary}
-DESCRIPTION:${desc}
-STATUS:${e.st === 'Validée' ? 'CONFIRMED' : 'TENTATIVE'}
-END:VEVENT
-`;
+    ical += 'BEGIN:VEVENT\nUID:' + (e.id || i) + '@taf\nDTSTART;VALUE=DATE:' + dtstart + '\nDTEND;VALUE=DATE:' + dtend + '\nSUMMARY:' + e.nom + ' - ' + e.type + '\nEND:VEVENT\n';
   });
-
   ical += 'END:VCALENDAR';
   
-  const blob = new Blob([ical], { type: 'text/calendar;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
+  const blob = new Blob([ical], { type: 'text/calendar' });
   const a = document.createElement('a');
-  a.href = url;
+  a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(url);
-  showToast('📥', 'Calendrier exporté !');
+  showToast('OK', 'Calendrier exporte');
 }
 
 function exportMyIcal() {
-  if (!meUser) { showToast('⚠️', 'Connectez-vous d\'abord'); return; }
-  const myDem = DEMANDES.filter(d => d.cid === meUser.id && d.st === 'Validée');
-  if (myDem.length === 0) { showToast('⚠️', 'Aucune absence à exporter'); return; }
-  generateIcal(myDem, `absences_${meUser.nom.toLowerCase()}.ics`);
+  if (!meUser) { showToast('!', 'Connectez-vous'); return; }
+  const my = DEMANDES.filter(d => d.cid === meUser.id && d.st === 'Validee');
+  if (!my.length) { showToast('!', 'Aucune absence'); return; }
+  generateIcal(my, 'absences_' + meUser.nom.toLowerCase() + '.ics');
 }
 
 function exportAllIcal() {
-  const validated = DEMANDES.filter(d => d.st === 'Validée');
-  if (validated.length === 0) { showToast('⚠️', 'Aucune absence à exporter'); return; }
-  generateIcal(validated, 'absences_equipe.ics');
+  const all = DEMANDES.filter(d => d.st === 'Validee');
+  if (!all.length) { showToast('!', 'Aucune absence'); return; }
+  generateIcal(all, 'absences_equipe.ics');
 }
 
-/* ═══════════ CONFIG TABS ═══════════ */
+/* ═══════════ CONFIG ═══════════ */
 function showConfigTab(tab) {
   document.querySelectorAll('[id^="cfg-tab-"]').forEach(el => el.style.display = 'none');
   document.querySelectorAll('.tabs .tab').forEach(el => el.classList.remove('on'));
@@ -1177,27 +994,14 @@ function showConfigTab(tab) {
   event.target.classList.add('on');
 }
 
-function saveNotifConfig() {
-  localStorage.setItem('notif_from', document.getElementById('cfg-smtp-from').value);
-  localStorage.setItem('notif_to', document.getElementById('cfg-smtp-to').value);
-  showToast('💾', 'Configuration notifications sauvegardée');
-}
-
-function copyFirestoreRules() {
-  const rules = document.getElementById('firestore-rules-code').textContent;
-  navigator.clipboard.writeText(rules).then(() => {
-    showToast('📋', 'Règles copiées !');
-  });
-}
-
-/* ═══════════ SEED DATABASE ═══════════ */
 async function seedDatabase() {
-  if (!db) { showToast('❌', 'Connectez Firebase d\'abord'); return; }
-  if (!confirm('Créer les collections et données de démo ?')) return;
+  if (!db) { showToast('X', 'Connectez Firebase'); return; }
+  if (!confirm('Creer les donnees de demo ?')) return;
   
-  showToast('⏳', 'Initialisation...');
+  showToast('...', 'Initialisation...');
   
   try {
+    // CREATION UNIQUEMENT DANS FIREBASE
     const collabs = [
       {nom:'CHARLY',    svc:'import', role:'collab',    pin:'0000', email:'charleshadrien@taftrans.fr', rttD:12, rttS:7, cpT:17, cpS:8},
       {nom:'AURELIEN',  svc:'import', role:'chef',      pin:'0000', email:'aurelien@taftrans.fr',       rttD:13, rttS:7, cpT:25, cpS:13},
@@ -1206,37 +1010,27 @@ async function seedDatabase() {
       {nom:'CHRISTOPHE',svc:'import', role:'directeur', pin:'2709', email:'christophe@taftrans.fr',     rttD:12.5, rttS:9.5, cpT:30.5, cpS:20.5},
     ];
     
-    const collabRefs = {};
+    const refs = {};
     for (const c of collabs) {
       const ref = await db.collection('collaborateurs').add(c);
-      collabRefs[c.nom] = ref.id;
+      refs[c.nom] = ref.id;
     }
     
     const demandes = [
-      {nom:'INGY',      type:'Congé',   deb:'2026-04-20', fin:'2026-04-25', st:'Validée'},
-      {nom:'ROMAIN',    type:'1/2 RTT', deb:'2026-04-16', fin:'2026-04-16', st:'Validée'},
-      {nom:'CHRISTOPHE',type:'Congé',   deb:'2026-04-13', fin:'2026-04-18', st:'Validée'},
+      {nom:'INGY',      type:'Conge',   deb:'2026-04-20', fin:'2026-04-25', st:'Validee'},
+      {nom:'ROMAIN',    type:'1/2 RTT', deb:'2026-04-16', fin:'2026-04-16', st:'Validee'},
+      {nom:'CHRISTOPHE',type:'Conge',   deb:'2026-04-13', fin:'2026-04-18', st:'Validee'},
       {nom:'AURELIEN',  type:'RTT',     deb:'2026-04-01', fin:'2026-04-01', st:'En attente'},
-      {nom:'CHARLY',    type:'Congé',   deb:'2026-04-28', fin:'2026-05-02', st:'En attente'},
+      {nom:'CHARLY',    type:'Conge',   deb:'2026-04-28', fin:'2026-05-02', st:'En attente'},
     ];
     
     for (const d of demandes) {
-      await db.collection('demandes').add({
-        cid: collabRefs[d.nom],
-        nom: d.nom,
-        svc: 'import',
-        type: d.type,
-        deb: d.deb,
-        fin: d.fin,
-        st: d.st,
-        com: '',
-        dateDemande: new Date().toISOString()
-      });
+      await db.collection('demandes').add({ cid: refs[d.nom], nom: d.nom, svc: 'import', type: d.type, deb: d.deb, fin: d.fin, st: d.st, com: '', dateDemande: new Date().toISOString() });
     }
     
-    showToast('✅', 'Base initialisée !');
+    showToast('OK', 'Base initialisee !');
   } catch (e) {
-    showToast('❌', 'Erreur: ' + e.message);
+    showToast('X', 'Erreur: ' + e.message);
   }
 }
 
@@ -1253,71 +1047,7 @@ document.querySelectorAll('.ntab').forEach(btn => {
 });
 
 /* ═══════════ INIT ═══════════ */
-(function init() {
-  // Config Firebase
-  const config = getFirebaseConfig();
-  document.getElementById('cfg-apiKey').value = config.apiKey || '';
-  document.getElementById('cfg-authDomain').value = config.authDomain || '';
-  document.getElementById('cfg-projectId').value = config.projectId || '';
-  
-  // Cloud Function code
-  document.getElementById('cloud-function-code').textContent = `const functions = require('firebase-functions');
-const nodemailer = require('nodemailer');
-
-// Configure SMTP
-const transporter = nodemailer.createTransport({
-  host: 'smtp.votre-serveur.com',
-  port: 587,
-  auth: { user: 'xxx', pass: 'xxx' }
-});
-
-exports.onNewDemande = functions.firestore
-  .document('demandes/{docId}')
-  .onCreate(async (snap, ctx) => {
-    const data = snap.data();
-    await transporter.sendMail({
-      from: 'noreply@taftrans.fr',
-      to: 'manager@taftrans.fr',
-      subject: '📝 Nouvelle demande de ' + data.nom,
-      html: \`<h2>\${data.nom} - \${data.type}</h2>
-             <p>Du \${data.deb} au \${data.fin}</p>
-             <p>\${data.com || ''}</p>\`
-    });
-  });`;
-
-  // Firestore rules
-  document.getElementById('firestore-rules-code').textContent = `rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Collaborateurs: lecture tous, écriture admin
-    match /collaborateurs/{docId} {
-      allow read: if true;
-      allow write: if false; // Admin SDK only
-    }
-    
-    // Demandes: lecture tous, création tous, 
-    // modification restreinte
-    match /demandes/{docId} {
-      allow read: if true;
-      allow create: if true;
-      allow update: if request.resource.data.diff(resource.data)
-        .affectedKeys().hasOnly(['st', 'dateValidation']);
-      allow delete: if false;
-    }
-  }
-}`;
-
-  // Load notif config
-  document.getElementById('cfg-smtp-from').value = localStorage.getItem('notif_from') || '';
-  document.getElementById('cfg-smtp-to').value = localStorage.getItem('notif_to') || '';
-  
-  // Init Firebase
-  if (config.apiKey && config.projectId) {
-    initFirebase();
-  } else {
-    setFirebaseStatus(false, 'Non configuré');
-  }
-})();
+initFirebase();
 </script>
 </body>
 </html>
